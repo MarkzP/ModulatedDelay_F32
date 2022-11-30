@@ -40,7 +40,7 @@ boolean AudioEffectModulatedDelay_F32::begin(float *delayline, uint16_t d_length
   _delayline = NULL;
   _delay_length = 0;
   _cb_index = 0;
-  _delay_offset = 0;
+  _delay_offset = 0.0f;
 
   if (delayline == NULL)
     return (false);
@@ -50,7 +50,7 @@ boolean AudioEffectModulatedDelay_F32::begin(float *delayline, uint16_t d_length
   _delayline = delayline;
   _delay_length = d_length;
   memset(_delayline, 0, _delay_length * sizeof(float));
-  _delay_offset = _delay_length >> 1 ;
+  _delay_offset = (float)(_delay_length >> 1);
 
   return (true);
 }
@@ -93,9 +93,12 @@ void AudioEffectModulatedDelay_F32::update(void)
       mod_fraction = modff(mod_index, &mod_number); // split float of mod_index into integer (= mod_number) and fraction part
 
       // calculate modulation index into circular buffer
-      cb_mod_index = _cb_index - (_delay_offset + mod_number);
-      if (cb_mod_index < 0) // check for negative offsets and correct them
+      cb_mod_index = (int16_t)((float)_cb_index - (_delay_offset + mod_number));
+      while (cb_mod_index < 0) // check for negative offsets and correct them
         cb_mod_index += _delay_length;
+      
+      while (cb_mod_index >= _delay_length) // check for positive offsets and correct them
+        cb_mod_index -= _delay_length;
 
       if (cb_mod_index == _delay_length - 1)
         cb_mod_index_neighbor = 0;

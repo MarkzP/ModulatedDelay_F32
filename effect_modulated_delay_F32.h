@@ -38,6 +38,8 @@
 class AudioEffectModulatedDelay_F32 :
   public AudioStream_F32
 {
+//GUI: inputs:1, outputs:1  //this line used for automatic generation of GUI node
+//GUI: shortName:effect_ModulatedDelay	
   public:
     AudioEffectModulatedDelay_F32(void):
       AudioStream_F32(2, inputQueueArray)
@@ -57,7 +59,7 @@ class AudioEffectModulatedDelay_F32 :
     uint16_t _cb_index;   // current write pointer of the circular buffer
     uint16_t _delay_length; // calculated number of samples of the delay
     int16_t cb_mod_index; // current read pointer with modulation for the circular buffer
-    uint16_t _delay_offset;
+    float _delay_offset;
 };
 
 #endif
