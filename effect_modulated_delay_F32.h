@@ -58,7 +58,6 @@ class AudioEffectModulatedDelay_F32 :
     float *_delayline;  // pointer for the circular buffer
     uint16_t _cb_index;   // current write pointer of the circular buffer
     uint16_t _delay_length; // calculated number of samples of the delay
-    int16_t cb_mod_index; // current read pointer with modulation for the circular buffer
     float _delay_offset;
 };
 

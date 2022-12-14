@@ -73,7 +73,7 @@ void AudioEffectModulatedDelay_F32::update(void)
   if (block && modulation)
   {
     float *bp;
-    int16_t cb_mod_index_neighbor;
+    int16_t cb_mod_index, cb_mod_index_neighbor;
     float *mp;
     float mod_index;
     float mod_number;
@@ -90,15 +90,15 @@ void AudioEffectModulatedDelay_F32::update(void)
 
       // calculate the modulation-index as a floating point number for interpolation
       mod_index = *mp * _delay_offset;
+      if (mod_index < -_delay_offset) mod_index = -_delay_offset;
+      else if (mod_index > _delay_offset) mod_index = _delay_offset;
+      
       mod_fraction = modff(mod_index, &mod_number); // split float of mod_index into integer (= mod_number) and fraction part
 
       // calculate modulation index into circular buffer
-      cb_mod_index = (int16_t)((float)_cb_index - (_delay_offset + mod_number));
+      cb_mod_index = (int)_cb_index - (int)(_delay_offset + mod_number);
       while (cb_mod_index < 0) // check for negative offsets and correct them
         cb_mod_index += _delay_length;
-      
-      while (cb_mod_index >= _delay_length) // check for positive offsets and correct them
-        cb_mod_index -= _delay_length;
 
       if (cb_mod_index == _delay_length - 1)
         cb_mod_index_neighbor = 0;
