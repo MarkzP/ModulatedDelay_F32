@@ -39,6 +39,7 @@ boolean AudioEffectModulatedDelay_F32::begin(float *delayline, uint16_t d_length
 {
   _delayline = NULL;
   _delay_length = 0;
+  _max_delay_length = 0;
   _cb_index = 0;
   _delay_offset = 0.0f;
 
@@ -49,10 +50,25 @@ boolean AudioEffectModulatedDelay_F32::begin(float *delayline, uint16_t d_length
 
   _delayline = delayline;
   _delay_length = d_length;
-  memset(_delayline, 0, _delay_length * sizeof(float));
+  _max_delay_length = d_length;
+  memset(_delayline, 0, _max_delay_length * sizeof(float));
   _delay_offset = (float)(_delay_length >> 1);
 
   return (true);
+}
+
+void AudioEffectModulatedDelay_F32::delay(float ms)
+{
+  if (!_delayline) return;
+  
+  if (ms < 0.0f) ms = 0.0f;
+  uint16_t len = (uint16_t)(ms * 0.001f * _sample_rate_Hz);
+  if (len > _max_delay_length) len = _max_delay_length;
+
+  __disable_irq(); 
+  _delay_length = len;
+  _delay_offset = (float)(_delay_length >> 1);
+  __enable_irq();      
 }
 
 uint16_t AudioEffectModulatedDelay_F32::get_delay_length(void)

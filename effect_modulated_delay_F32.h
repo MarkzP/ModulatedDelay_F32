@@ -43,21 +43,28 @@ class AudioEffectModulatedDelay_F32 :
   public:
     AudioEffectModulatedDelay_F32(void):
       AudioStream_F32(2, inputQueueArray)
-    { }
+    {
+      _sample_rate_Hz = AUDIO_SAMPLE_RATE_EXACT;
+    }
 
     AudioEffectModulatedDelay_F32(const AudioSettings_F32 &settings):
       AudioStream_F32(2, inputQueueArray)
-    { }    
+    {
+      _sample_rate_Hz = settings.sample_rate_Hz;
+    }    
 
     boolean begin(float *delayline, uint16_t delay_length);
     virtual void update(void);
+    virtual void delay(float ms);
     virtual uint16_t get_delay_length(void);
 
   private:
     audio_block_f32_t *inputQueueArray[2];
+    float _sample_rate_Hz;
     float *_delayline;  // pointer for the circular buffer
     uint16_t _cb_index;   // current write pointer of the circular buffer
     uint16_t _delay_length; // calculated number of samples of the delay
+    uint16_t _max_delay_length;
     float _delay_offset;
 };
 
