@@ -57,6 +57,7 @@ class AudioEffectModulatedDelay_F32 :
     virtual void update(void);
     virtual void delay(float ms);
     virtual uint16_t get_delay_length(void);
+    float get_mod_delay_ms(){ return 1000.0f * (_delay_offset + _mod_index) / _sample_rate_Hz; }
 
   private:
     audio_block_f32_t *inputQueueArray[2];
@@ -65,6 +66,7 @@ class AudioEffectModulatedDelay_F32 :
     uint16_t _cb_index;   // current write pointer of the circular buffer
     uint16_t _delay_length; // calculated number of samples of the delay
     uint16_t _max_delay_length;
+    float _mod_index;
     float _delay_offset;
 };
 
